@@ -1,0 +1,78 @@
+.black_label{
+	-fx-text-fill: black;
+}
+.scroll-pane {
+    -fx-background-insets: 0.0;
+    -fx-padding: 0.0;
+    -fx-background-color: black;
+    -fx-focus-traversable: false;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0.0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0.0;
+    -fx-background-color: black;
+}
+.scroll-pane .scroll-bar:horizontal{
+	-fx-background-color: black ;
+}
+.scroll-pane .scroll-bar:horizontal .track{
+	-fx-background-color: yellow;
+}
+.scroll-pane .scroll-bar:horizontal .thumb{
+	-fx-background-color: black;
+}
+.scroll-pane .scroll-bar:horizontal .increment-button .increment-arrow{
+	-fx-background-color: yellow;
+}
+.scroll-pane .scroll-bar:horizontal .decrement-button .decrement-arrow{
+	-fx-background-color: yellow;
+}
+.scroll-pane .viewport{
+	-fx-background-color: yellow;
+}
+.vbox{
+	-fx-background-color: black;
+	-fx-background-image: url("/resources/pacman.png");
+	-fx-background-position: top right;
+	-fx-background-size: 250.0px auto;
+	-fx-background-repeat: no-repeat;
+	
+	-fx-spacing: 10.0px;
+}
+.vbox_small{
+	-fx-border-style: hidden solid solid hidden;
+	-fx-spacing: 10.0px;
+}
+.vbox_small:hover{
+	-fx-background-color: derive(yellow,0.35); 
+}
+.menu-bar{
+	-fx-background-color: black;
+}
+.menu-button .label{
+	-fx-font-size: 12.0px;
+}
+.menu-button:hover{
+	-fx-background-color: yellow;
+}
+.menu-button .label{
+	-fx-text-fill: yellow;
+}
+
+.menu-button:hover .label{
+	-fx-text-fill: black;
+}
+.button-back{
+	-fx-background-color: black;
+	-fx-text-fill: yellow;
+	-fx-border-style: solid;
+	-fx-border-color: yellow;
+	-fx-border-radius: 3.0px;
+}
+.title-grid{
+	-fx-padding: 0.0 10.0 0.0 10.0;
+}
