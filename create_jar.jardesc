@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="WINDOWS-1250" standalone="no"?>
+<jardesc>
+    <jar path="SnakeFX/src/snake.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/SnakeFX/create_jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=SnakeFX/src&lt;application{Main.java[Main" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="true">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <file path="/SnakeFX/create_jar.jardesc"/>
+        <javaElement handleIdentifier="=SnakeFX/src&lt;application"/>
+        <file path="/SnakeFX/.classpath"/>
+        <file path="/SnakeFX/.gitignore"/>
+        <file path="/SnakeFX/.project"/>
+        <javaElement handleIdentifier="=SnakeFX/src&lt;resources"/>
+        <file path="/SnakeFX/build.fxbuild"/>
+        <file path="/SnakeFX/README.md"/>
+    </selectedElements>
+</jardesc>

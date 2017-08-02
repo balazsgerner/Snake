@@ -3,6 +3,7 @@ package application;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -17,136 +18,138 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class Main extends Application {
 
-	private CanvasPainter canvasPainter;
+  private CanvasPainter canvasPainter;
 
-	private Manager manager;
+  private Manager manager;
 
-	@Override
-	public void start(Stage primaryStage) {
-		try {
-			BorderPane root = new BorderPane();
-			Scene scene = new Scene(root);
-			primaryStage.setScene(scene);
-			final InputStream path = Main.class.getResourceAsStream("/resources/icon.png");
-			primaryStage.getIcons().add(new Image(path));
+  @Override
+  public void start(Stage primaryStage) {
+    try {
+      BorderPane root = new BorderPane();
+      Scene scene = new Scene(root);
+      primaryStage.setScene(scene);
+      final InputStream path = Main.class.getResourceAsStream("/resources/icon.png");
+      primaryStage.getIcons().add(new Image(path));
 
-			// ------ INIT UI
-			Pane container = new Pane();
-			ObservableList<Node> children = container.getChildren();
-			Canvas background = new Canvas(CanvasPainter.CANVAS_WIDTH, CanvasPainter.CANVAS_HEIGHT);
-			Canvas elements = new Canvas(CanvasPainter.CANVAS_WIDTH, CanvasPainter.CANVAS_HEIGHT);
-			children.addAll(background, elements);
-			root.setCenter(container);
-			primaryStage.setTitle("SnakeFX");
+      // ------ INIT UI
+      StackPane container = new StackPane();
+      ObservableList<Node> children = container.getChildren();
+      Canvas background = new Canvas(CanvasPainter.CANVAS_WIDTH, CanvasPainter.CANVAS_HEIGHT);
+      Canvas elements = new Canvas(CanvasPainter.CANVAS_WIDTH, CanvasPainter.CANVAS_HEIGHT);
+      children.addAll(background, elements);
+      root.setCenter(container);
+      primaryStage.setTitle("SnakeFX");
 
-			// ------ CANVAS PAINTER
-			canvasPainter = new CanvasPainter(background, elements);
+      // ------ CANVAS PAINTER
+      canvasPainter = new CanvasPainter(background, elements);
 
-			// ------ MANAGER
-			manager = Manager.getInstance();
+      // ------ MANAGER
+      manager = Manager.getInstance();
 
-			// ------ MAP[WIDTH * HEIGHT]
-			List<Field> map = createMap();
-			manager.setMap(map);
+      // ------ MAP[WIDTH * HEIGHT]
+      List<Field> map = createMap();
+      manager.setMap(map);
 
-			// ------ SNAKE[INITIAL_SIZE]
-			Snake snake = new Snake(Manager.INITIAL_SNAKE_SIZE);
-			manager.setSnake(snake);
+      // ------ SNAKE[INITIAL_SIZE]
+      Snake snake = new Snake(Manager.INITIAL_SNAKE_SIZE);
+      manager.setSnake(snake);
 
-			// ------ START
-			manager.startGame();
+      // ------ START
+      manager.startGame();
 
-			// ------
-			canvasPainter.paintBackground();
-			// ------
+      // ------
+      canvasPainter.paintBackground();
+      // ------
 
-			// ----- EVENT HANDLING
-			addEventHandlers(root, scene);
-			
-			// ----- REPAINT TIMER
-			startTimer();
-			// -----
+      // ----- EVENT HANDLING
+      addEventHandlers(root, scene);
 
-			primaryStage.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+      // ----- REPAINT TIMER
+      startTimer();
+      // -----
 
-	private void addEventHandlers(BorderPane root, Scene scene) {
+      primaryStage.show();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-		// ------ HIDE MOUSE CURSOR
-		root.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				scene.setCursor(Cursor.NONE);
-			}
-		});
+  private void addEventHandlers(BorderPane root, Scene scene) {
 
-		// ------ KEYEVENTHANDLER
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				KeyCode code = event.getCode();
+    // ------ HIDE MOUSE CURSOR
+    root.setOnMouseEntered(new EventHandler<MouseEvent>() {
 
-				Direction dir = null;
-				switch (code) {
-				case UP:
-					dir = Direction.NORTH;
-					break;
-				case DOWN:
-					dir = Direction.SOUTH;
-					break;
-				case RIGHT:
-					dir = Direction.EAST;
-					break;
-				case LEFT:
-					dir = Direction.WEST;
-					break;
+      @Override
+      public void handle(MouseEvent event) {
+        scene.setCursor(Cursor.NONE);
+      }
+    });
 
-				case P:
-					// PAUSE
-					manager.togglePause();
-					break;
-				case R:
-					// RESTART
-					manager.restartGame();
+    // ------ KEYEVENTHANDLER
+    scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
-				default:
-					break;
-				}
+      @Override
+      public void handle(KeyEvent event) {
+        KeyCode code = event.getCode();
 
-				if (dir != null && !manager.isPaused()) {
-					Snake snake = manager.getSnake();
-					snake.move(dir);
-				}
-			}
-		});
+        Direction dir = null;
+        switch (code) {
+        case UP:
+          dir = Direction.NORTH;
+          break;
+        case DOWN:
+          dir = Direction.SOUTH;
+          break;
+        case RIGHT:
+          dir = Direction.EAST;
+          break;
+        case LEFT:
+          dir = Direction.WEST;
+          break;
 
-	}
+        case P:
+          // PAUSE
+          manager.togglePause();
+          break;
+        case R:
+          // RESTART
+          manager.restartGame();
 
-	private void startTimer() {
-		// ~60FPS
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(15), ae -> canvasPainter.paintElements()));
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.play();
-	}
+        default:
+          break;
+        }
 
-	private List<Field> createMap() {
-		List<Field> map = new ArrayList<>(Manager.NUMBER_OF_FIELDS);
-		for (int i = 0; i < Manager.NUMBER_OF_FIELDS; i++) {
-			map.add(new Field());
-		}
-		return map;
-	}
+        if (dir != null && !manager.isPaused()) {
+          Snake snake = manager.getSnake();
+          snake.move(dir);
+        }
+      }
+    });
 
-	public static void main(String[] args) {
-		launch(args);
-	}
+  }
+
+  private void startTimer() {
+    // ~60FPS
+    Timeline timeline = new Timeline(new KeyFrame(Duration.millis(15), ae -> canvasPainter.paintElements()));
+    timeline.setCycleCount(Timeline.INDEFINITE);
+    timeline.play();
+  }
+
+  private List<Field> createMap() {
+    List<Field> map = new ArrayList<>(Manager.NUMBER_OF_FIELDS);
+    for (int i = 0; i < Manager.NUMBER_OF_FIELDS; i++) {
+      map.add(new Field());
+    }
+    return map;
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
 }

@@ -1,5 +1,7 @@
 package application;
 
+import application.collectable.Collectable;
+
 public class Field {
 
 	private Collectable collectable;
