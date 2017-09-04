@@ -13,7 +13,7 @@ import javafx.scene.shape.StrokeLineJoin;
 public class Fruit extends Collectable {
 
   private enum FruitType {
-    REDAPPLE, GREENAPPLE, REDGRAPE, ORANGE, STRAWBERRY, BANANA, CHERRY, MELON, PEAR
+    REDAPPLE, GREENAPPLE, REDGRAPE, ORANGE, STRAWBERRY, BANANA, CHERRY, MELON, PEAR, ICE_CREAM
   }
 
   private FruitType type;
@@ -26,6 +26,8 @@ public class Fruit extends Collectable {
 
   private Image pearImg;
 
+  private Image iceCreamImg;
+
   public Fruit() {
     int random = randomColorGenerator.nextInt(FruitType.values().length);
     this.type = FruitType.values()[random];
@@ -37,7 +39,8 @@ public class Fruit extends Collectable {
       cherryImg = new Image(Main.class.getResourceAsStream("../resources/cherry.jpg"), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
     } else if (type == FruitType.PEAR) {
       pearImg = new Image(Main.class.getResourceAsStream("../resources/pear.jpg"), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
-
+    } else if (type == FruitType.ICE_CREAM) {
+      iceCreamImg = new Image(Main.class.getResourceAsStream("../resources/ice_cream.jpg"), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
     }
   }
 
@@ -62,6 +65,9 @@ public class Fruit extends Collectable {
       return;
     } else if (type == FruitType.PEAR) {
       paintPear(ctx, x, y);
+      return;
+    } else if (type == FruitType.ICE_CREAM) {
+      paintIceCream(ctx, x, y);
       return;
     }
 
@@ -126,6 +132,10 @@ public class Fruit extends Collectable {
 
   private void paintPear(GraphicsContext ctx, double x, double y) {
     ctx.drawImage(pearImg, x, y);
+  }
+
+  private void paintIceCream(GraphicsContext ctx, double x, double y) {
+    ctx.drawImage(iceCreamImg, x, y);
   }
 
   private void paintBanana(GraphicsContext ctx, Point2D point) {
