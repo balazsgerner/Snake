@@ -19,19 +19,26 @@ public abstract class Collectable {
 
   protected Properties properties;
 
+  protected String imageKey;
+
   protected Image image;
 
   public Collectable() {
     properties = new Properties();
     try {
       properties.load(Main.class.getResourceAsStream("../resources/images.properties"));
-
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
+  public abstract void loadImage();
+
   public abstract void collect();
+
+  protected boolean isLandscape() {
+    return Boolean.valueOf(properties.getProperty(imageKey + "_landscape"));
+  }
 
   public void paint(GraphicsContext ctx, Point2D point) {
     ctx.drawImage(image, point.getX(), point.getY());

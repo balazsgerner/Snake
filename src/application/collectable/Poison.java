@@ -4,8 +4,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import application.Main;
 import application.Manager;
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class Poison extends Collectable {
@@ -16,14 +14,19 @@ public class Poison extends Collectable {
 
   private PoisonColor type;
 
-  private Image poisonImg;
-
   public Poison() {
     super();
     int ordinal = ThreadLocalRandom.current().nextInt(PoisonColor.values().length);
     type = PoisonColor.values()[ordinal];
-    String imgKey = properties.getProperty("poison_" + type.name().toLowerCase());
-    poisonImg = new Image(Main.class.getResourceAsStream(imgKey), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
+    loadImage();
+  }
+
+  @Override
+  public void loadImage() {
+    imageKey = properties.getProperty("poison_" + type.name().toLowerCase());
+    image = isLandscape() ?
+    new Image(Main.class.getResourceAsStream(imageKey), ELEMENT_WIDTH, 0, true, true) :
+    new Image(Main.class.getResourceAsStream(imageKey), 0, ELEMENT_HEIGHT, true, true);
   }
 
   @Override
@@ -32,8 +35,4 @@ public class Poison extends Collectable {
     manager.killSnake();
   }
 
-  @Override
-  public void paint(GraphicsContext ctx, Point2D point) {
-    ctx.drawImage(poisonImg, point.getX(), point.getY());
-  }
 }

@@ -19,10 +19,14 @@ public class Fruit extends Collectable {
     super();
     int random = randomColorGenerator.nextInt(FruitType.values().length);
     this.type = FruitType.values()[random];
+    loadImage();
+  }
 
-    // Store resized image in memory
-    String imgKey = properties.getProperty(type.name().toLowerCase());
-    image = new Image(Main.class.getResourceAsStream(imgKey), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
+  public void loadImage() {
+    imageKey = properties.getProperty(type.name().toLowerCase());
+    image = isLandscape() ?
+    new Image(Main.class.getResourceAsStream(imageKey), ELEMENT_WIDTH, 0, true, true) :
+    new Image(Main.class.getResourceAsStream(imageKey), 0, ELEMENT_HEIGHT, true, true);
   }
 
   @Override
