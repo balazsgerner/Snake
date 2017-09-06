@@ -7,6 +7,7 @@ import application.collectable.Collectable;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class CanvasPainter {
@@ -24,6 +25,8 @@ public class CanvasPainter {
   public static final int ELEMENT_HEIGHT = GRID_HEIGHT - GRID_WIDTH / 3;
 
   private static final boolean SHOWGRID = false;
+
+  private static final boolean BG_TEXTURE = true;
 
   private Canvas background;
 
@@ -49,7 +52,13 @@ public class CanvasPainter {
   public void paintBackground() {
     GraphicsContext backgroundContext = background.getGraphicsContext2D();
     backgroundContext.setFill(Color.BLACK);
-    backgroundContext.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    if (BG_TEXTURE) {
+      Image bgImg = new Image(ResourceLoader.getInstance().loadProperty("bg_texture"), CANVAS_WIDTH, CANVAS_HEIGHT, true, true);
+      backgroundContext.drawImage(bgImg, 0, 0);
+    } else {
+      backgroundContext.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
 
     if (SHOWGRID) {
       backgroundContext.setStroke(Color.WHITE);
@@ -119,6 +128,8 @@ public class CanvasPainter {
 
     int index;
     int lastIndex = fields.size() - 1;
+    ctx.setStroke(Color.BLACK);
+    ctx.setLineWidth(0.75);
     for (int i = lastIndex; i >= 0; i--) {
       Field f = fields.get(i);
       index = f.getIndex();
@@ -126,7 +137,7 @@ public class CanvasPainter {
       point = getTopLeftCornerPosByIndex(index);
 
       if (i == 0) {
-        //Head color
+        // Head color
         col = col.interpolate(Color.WHITE, 0.9);
         ctx.setFill(col);
       } else {
@@ -134,6 +145,7 @@ public class CanvasPainter {
         col = col.brighter();
       }
       ctx.fillRect(point.getX(), point.getY(), ELEMENT_WIDTH, ELEMENT_HEIGHT);
+      ctx.strokeRect(point.getX(), point.getY(), ELEMENT_WIDTH, ELEMENT_HEIGHT);
     }
   }
 

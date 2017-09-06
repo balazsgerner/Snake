@@ -2,8 +2,8 @@ package application.collectable;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import application.Main;
 import application.Manager;
+import application.ResourceLoader;
 import javafx.scene.image.Image;
 
 public class Poison extends Collectable {
@@ -23,10 +23,11 @@ public class Poison extends Collectable {
 
   @Override
   public void loadImage() {
-    imageKey = properties.getProperty("poison_" + type.name().toLowerCase());
-    image = isLandscape() ?
-    new Image(Main.class.getResourceAsStream(imageKey), ELEMENT_WIDTH, 0, true, true) :
-    new Image(Main.class.getResourceAsStream(imageKey), 0, ELEMENT_HEIGHT, true, true);
+    imageKey = ResourceLoader.getInstance().loadProperty("poison_" + type.name().toLowerCase());
+//    image = isLandscape() ?
+//    new Image(Main.class.getResourceAsStream(imageKey), ELEMENT_WIDTH, 0, true, true) :
+//    new Image(Main.class.getResourceAsStream(imageKey), 0, ELEMENT_HEIGHT, true, true);
+    image = new Image(ResourceLoader.class.getResourceAsStream(imageKey), ELEMENT_WIDTH, ELEMENT_HEIGHT, true, true);
   }
 
   @Override
