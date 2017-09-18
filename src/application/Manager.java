@@ -26,32 +26,35 @@ public class Manager {
    */
   public static final int INITIAL_SNAKE_SIZE = 4;
 
-  private static final int SNAKE_PROGRESS_SPEED = 250;
+  static final int SNAKE_PROGRESS_SPEED = 250;
 
-  private static final int MAX_POISON = 8;
+  static final int MIN_POISON = 3;
 
-  private static final int MIN_POISON = 4;
+  static final int MAX_POISON = 8;
 
-  /**
-   * Poison Drop Rate [s]
-   */
-//  private static final int POISON_DROP_RATE = 30;
+  static final int POISON_REFRESH_MIN_LEVEL = 2;
 
-  private static Manager instance = null;
+  static final int POISON_REFRESH_MAX_LEVEL = 5;
 
-  private Snake snake;
+  static Manager instance = null;
 
-  private List<Field> map;
+  Snake snake;
 
-  private Field foodContainer;
+  List<Field> map;
 
-  private List<Field> poisonContainers;
+  Field foodContainer;
 
-  private Timer gameTimer;
+  List<Field> poisonContainers;
 
-  private int maxPoison;
+  Timer gameTimer;
 
-  private boolean paused = false;
+  int oldPoisonNum = 0;
+
+  int poisonNum;
+
+  int poisonRefreshLevel;
+
+  boolean paused = false;
 
   protected Manager() {
   }
@@ -68,7 +71,7 @@ public class Manager {
     snake.setManager();
   }
 
-  private void setRandomStartPosition() {
+  void setRandomStartPosition() {
     Direction startDirection = Direction.getRandomDirection();
     Direction oppositeDirection = startDirection.getOppositeDirection();
     snake.resetToInitial(startDirection);
@@ -102,7 +105,7 @@ public class Manager {
     foodContainer.addCollectable(food);
   }
 
-  private Field getEmptyField() {
+  Field getEmptyField() {
     Field randomField = getRandomField();
 
     boolean notEmpty = checkNotEmpty(randomField);
@@ -114,32 +117,44 @@ public class Manager {
     return randomField;
   }
 
-  private boolean checkNotEmpty(Field randomField) {
+  boolean checkNotEmpty(Field randomField) {
     List<Field> fields = snake.getContainedFields();
     boolean notEmpty = fields.contains(randomField) || poisonContainers != null && poisonContainers.contains(randomField)
         || randomField == foodContainer;
     return notEmpty;
   }
 
-  public void dropPoison() {
-    int maxPosion = ThreadLocalRandom.current().nextInt(MIN_POISON, MAX_POISON + 1);
-    if (poisonContainers.size() < maxPosion) {
-      Field randomField = getEmptyField();
-
-      randomField.addCollectable(new Poison());
-      poisonContainers.add(randomField);
-    } else if (poisonContainers.isEmpty()) {
-      maxPoison = ThreadLocalRandom.current().nextInt(MIN_POISON, MAX_POISON + 1);
-    } else {
-      // SCHEDULE HIDE
-      int randomIndex = ThreadLocalRandom.current().nextInt(poisonContainers.size());
-      Field p = poisonContainers.get(randomIndex);
-      p.removeCollectable();
-      poisonContainers.remove(p);
+  void generateNewPoisonNum() {
+    // get a new posionNumValue that differs from the previous
+    poisonNum = ThreadLocalRandom.current().nextInt(MIN_POISON, MAX_POISON + 1);
+    while (poisonNum == oldPoisonNum) {
+      poisonNum = ThreadLocalRandom.current().nextInt(MIN_POISON, MAX_POISON + 1);
     }
   }
 
-  private Field getRandomField() {
+  public void deletePoison() {
+    while (oldPoisonNum > poisonNum) {
+      // delete random poison from map
+      Field del = poisonContainers.remove(ThreadLocalRandom.current().nextInt(poisonContainers.size()));
+      del.removeCollectable();
+      oldPoisonNum--;
+    }
+  }
+
+  public void dropPoison() {
+    while (oldPoisonNum < poisonNum) {
+      Field randomField = getEmptyField();
+      randomField.addCollectable(new Poison());
+      poisonContainers.add(randomField);
+      oldPoisonNum++;
+    }
+  }
+
+  public void refreshPoisonRates() {
+    poisonRefreshLevel = ThreadLocalRandom.current().nextInt(POISON_REFRESH_MIN_LEVEL, POISON_REFRESH_MAX_LEVEL + 1);
+  }
+
+  Field getRandomField() {
     int randomIndex = ThreadLocalRandom.current().nextInt(NUMBER_OF_FIELDS);
     Field field = map.get(randomIndex);
     return field;
@@ -226,7 +241,7 @@ public class Manager {
     startSnakeTimer();
   }
 
-  private void startSnakeTimer() {
+  void startSnakeTimer() {
     gameTimer = new Timer(true);
     GameTimer timerTask = new GameTimer();
     gameTimer.scheduleAtFixedRate(timerTask, 0, SNAKE_PROGRESS_SPEED);
@@ -253,34 +268,35 @@ public class Manager {
     startGame();
   }
 
-  private class GameTimer extends TimerTask {
+  class GameTimer extends TimerTask {
 
-    private int max;
+    int max;
 
-//    private int rand;
-
-    private int i = 0;
+    int i = 0;
 
     public GameTimer() {
       restartWithNewMaximum();
     }
 
-    private void restartWithNewMaximum() {
-      // rand = ThreadLocalRandom.current().nextInt(POISON_DROP_RATE / 2,
-      // (int) (POISON_DROP_RATE * 1.5) + 1);
-      // max = rand * 1000 / SNAKE_PROGRESS_SPEED;
+    void restartWithNewMaximum() {
+      // No delete needed initially
+      generateNewPoisonNum();
+      deletePoison();
+      dropPoison();
+      refreshPoisonRates();
+      
+      max = poisonRefreshLevel * 20; 
     }
 
     @Override
     public void run() {
       if (!paused) {
-
         snake.progress();
+
         i++;
         if (i == max) {
-          dropPoison();
-
           restartWithNewMaximum();
+          i = 0;
         }
       }
     }
@@ -289,4 +305,5 @@ public class Manager {
   public boolean isPaused() {
     return paused;
   }
+
 }
