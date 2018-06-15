@@ -1,7 +1,7 @@
-package application.collectable;
+package application.game.collectable;
 
-import application.CanvasPainter;
-import application.ResourceLoader;
+import application.game.Manager;
+import application.utility.ResourceLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
@@ -10,17 +10,22 @@ import javafx.scene.paint.Color;
 
 public abstract class Collectable {
 
-  protected static final double ELEMENT_WIDTH = CanvasPainter.ELEMENT_WIDTH;
+  protected int elementWidth;
 
-  protected static final double ELEMENT_HEIGHT = CanvasPainter.ELEMENT_HEIGHT;
+  protected int elementHeight;
 
-  protected Color color;
-
+  protected double outlineWidth;
+  
   protected String imageKey;
 
   protected Image image;
-
-  public abstract void loadImage();
+    
+  public Collectable() {
+    Manager manager = Manager.getInstance();
+    elementWidth = manager.getElementWidth();
+    elementHeight = manager.getElementHeight();
+    outlineWidth = elementWidth * 0.0375;
+  }
 
   public abstract void collect();
 
